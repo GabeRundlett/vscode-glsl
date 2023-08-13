@@ -1,0 +1,25 @@
+{
+  "name": "glsl-language-support",
+  "displayName": "GLSL Language Support",
+  "description": "Language support for GLSL using glslls",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.81.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "glsl",
+      "aliases": ["GLSL", "glsl"],
+      "extensions": [".glsl"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "glsl",
+      "scopeName": "source.glsl",
+      "path": "./syntaxes/glsl.tmLanguage.json"
+    }]
+  }
+}
