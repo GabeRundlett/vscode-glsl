@@ -10,16 +10,25 @@
     "Programming Languages"
   ],
   "contributes": {
-    "languages": [{
-      "id": "glsl",
-      "aliases": ["GLSL", "glsl"],
-      "extensions": [".glsl"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "glsl",
-      "scopeName": "source.glsl",
-      "path": "./syntaxes/glsl.tmLanguage.json"
-    }]
+    "languages": [
+      {
+        "id": "glsl",
+        "aliases": [
+          "GLSL",
+          "glsl"
+        ],
+        "extensions": [
+          ".glsl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "glsl",
+        "scopeName": "source.glsl",
+        "path": "./syntaxes/glsl.tmLanguage"
+      }
+    ]
   }
 }
