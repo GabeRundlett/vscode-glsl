@@ -2,9 +2,7 @@ import axios from "axios";
 import * as vscode from "vscode";
 import * as fs from "fs";
 import { mkdirp } from "mkdirp";
-import { WorkspaceFolder } from "vscode-languageclient";
-import which = require("which");
-import { checkGLSLLSExecutableAvailability } from "./utils";
+import { checkGLSLLSExecutableIsAvaiable } from "./utils";
 
 export const releases = "https://github.com/GabeRundlett/glsl-language-server/releases/download"
 
@@ -74,60 +72,33 @@ export async function promptForInstallGLSLLS(context: vscode.ExtensionContext) {
         return await installLanguageServerExecutable(context);
 }
 
-export async function getGLSLLSPath(context: vscode.ExtensionContext): Promise<string | null> {
+export async function isGLSLLSInstalled(context: vscode.ExtensionContext): Promise<boolean> {
+    const glsllsExecutableExists = await checkGLSLLSExecutableIsAvaiable(context)
     const configuration = vscode.workspace.getConfiguration("glsl.glslls")
-    let glsllsPath = configuration.get<string | null>("path", null);
-    let error: string | null = null;
+    const glsllsPath = configuration.get<string | null>("path", null);
 
-    if (!glsllsPath) {
-        glsllsPath = which.sync("glslls", { nothrow: true });
-    }
-
-    const glsllsPathExists = glsllsPath !== null && fs.existsSync(glsllsPath)
-
-    if (glsllsPath && glsllsPathExists) {
+    if (glsllsPath != null && !glsllsExecutableExists) {
         try {
-            fs.accessSync(glsllsPath, fs.constants.R_OK | fs.constants.X_OK);
+            fs.accessSync(glsllsPath, fs.constants.R_OK | fs.constants.X_OK)
+            return true
         } catch {
-            error = `\`glslls.path\` ${glsllsPath} is not an executable`;
-        }
-        const stat = fs.statSync(glsllsPath);
-        if (!stat.isFile()) {
-            error = `\`glslls.path\` ${glsllsPath} is not a file`;
+            return false
         }
     }
 
-    if (error === null) {
-        if (!glsllsPath) {
-            return null
-        } else if (!glsllsPathExists) {
-            error = `Couldn't find GLSL Language Server executable at "${glsllsPath.replace(/"/gm, '\\"')}"`
-            return null
-        }
-    }
-
-    if (error) {
-        await vscode.window.showErrorMessage(error)
-        return null
-    }
-
-    return glsllsPath
+    return glsllsExecutableExists
 }
 
 export async function startClient(context: vscode.ExtensionContext) {
     const configuration = vscode.workspace.getConfiguration("glsl.glslls")
     const debugLog = configuration.get("debugLog", false)
-    // promptForInstallGLSLLS(context)
-    const glsllsPath = await getGLSLLSPath(context)
 
-    const test = await checkGLSLLSExecutableAvailability(context)
-    vscode.window.showInformationMessage(`message: ${test}`)
+    const glsllsExists = await isGLSLLSInstalled(context)
 
-    if (!glsllsPath) {
+    if (!glsllsExists) {
         promptForInstallGLSLLS(context)
-        return null
     }
-
+    vscode.window.showInformationMessage(`message: ${test}`)
 }
 
 export async function activate(context: vscode.ExtensionContext) {
