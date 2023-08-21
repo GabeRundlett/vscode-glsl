@@ -20,15 +20,6 @@ export const INSTALLATION_NAME = {
 type ObjectValues<T> = T[keyof T];
 type InstallationName = ObjectValues<typeof INSTALLATION_NAME>
 
-
-// export async function activate(context: vscode.ExtensionContext) {
-
-
-// }
-
-export async function deactivate(): Promise<void> { }
-
-
 export class GLSL {
     private readonly context: vscode.ExtensionContext;
 
@@ -78,7 +69,7 @@ export class GLSL {
             if (fs.existsSync(glsllsBinPath)) fs.rmSync(glsllsBinPath)
             fs.renameSync(glsllsBinTempPath, glsllsBinPath)
 
-            let config = vscode.workspace.getConfiguration("glsl.glslls");
+            const config = vscode.workspace.getConfiguration("glsl.glslls");
             await config.update("path", glsllsBinPath, true);
             vscode.window.showInformationMessage("GLSL Language Server has been successfully installed!")
             return glsllsBinPath;
