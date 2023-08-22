@@ -3,11 +3,6 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import { mkdirp } from "mkdirp";
 import { checkGLSLLSExecutableIsAvaiable } from "./utils";
-import {
-    LanguageClient,
-    LanguageClientOptions,
-    ServerOptions
-} from "vscode-languageclient/node";
 
 export let outputChannel: vscode.OutputChannel;
 export const releases = "https://github.com/GabeRundlett/glsl-language-server/releases/download"
@@ -69,8 +64,6 @@ export class GLSL {
             if (fs.existsSync(glsllsBinPath)) fs.rmSync(glsllsBinPath)
             fs.renameSync(glsllsBinTempPath, glsllsBinPath)
 
-            const config = vscode.workspace.getConfiguration("glsl.glslls");
-            await config.update("path", glsllsBinPath, true);
             vscode.window.showInformationMessage("GLSL Language Server has been successfully installed!")
             return glsllsBinPath;
         })
@@ -87,7 +80,7 @@ export class GLSL {
 
     private async isGLSLLSInstalled(context: vscode.ExtensionContext): Promise<boolean> {
         const glsllsExecutableExists = await checkGLSLLSExecutableIsAvaiable(context)
-        const configuration = vscode.workspace.getConfiguration("glsl.glslls")
+        const configuration = vscode.workspace.getConfiguration("glslls")
         const glsllsPath = configuration.get<string | null>("path", null);
 
         if (glsllsPath != null && !glsllsExecutableExists) {
@@ -110,7 +103,7 @@ export class GLSL {
             return null;
         }
 
-        vscode.commands.registerCommand("glsl.glslls.install", async () => {
+        vscode.commands.registerCommand("glslls.install", async () => {
             await this.installLanguageServerExecutable(this.context);
         });
     }
