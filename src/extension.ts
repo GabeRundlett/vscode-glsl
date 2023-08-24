@@ -10,7 +10,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     client = new Client(context);
     await client.start();
-
 }
 
 export async function deactivate(): Promise<void> {
