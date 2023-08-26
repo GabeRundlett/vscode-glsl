@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient/node";
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node";
 
 const LSP_NAME = "GLSL Language Server"
 
@@ -37,8 +37,11 @@ export default class Client {
 
 
         const serverOptions: ServerOptions = {
-            command: "zls",
-            args: ["-p 5352"],
+            command: "C:/dev/projects/cpp/glsl-language-server/.out/cl-x86_64-windows-msvc/Debug/glslls.exe",
+            args: [],
+            transport: TransportKind.stdio,
+            // command: "zls",
+            // args: ["-p 5352"],
         }
 
         this.client = new LanguageClient(
