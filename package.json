@@ -42,6 +42,12 @@
       "type": "object",
       "title": "GLSL",
       "properties": {
+        "glslls.path": {
+          "scope": "resource",
+          "type": "string",
+          "description": "Path to glslls executable. Example: `/usr/local/bin/glslls`. ",
+          "format": "path"
+        },
         "glsl.glslls.enabled": {
           "scope": "resource",
           "type": "boolean",
