@@ -1,8 +1,9 @@
 import { exec, spawn } from "child_process";
 import { ExtensionContext, window } from "vscode";
 
-export async function checkGLSLLSExecutableIsAvaiable(context: ExtensionContext): Promise<boolean> {
-    const glslLanguageServer = "glslls"
+export async function checkGLSLLSExecutableIsAvaiable(binaryPath: string): Promise<boolean> {
+    const glslLanguageServer = binaryPath
+
     return new Promise((resolve) => {
         const process = spawn(glslLanguageServer, ['--version'])
 

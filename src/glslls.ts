@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import * as vscode from "vscode";
 import * as fs from "fs";
-import { mkdirp } from "mkdirp";
 import { checkGLSLLSExecutableIsAvaiable } from "./utils";
 
 export let outputChannel: vscode.OutputChannel;
@@ -9,10 +8,7 @@ const releases_url = "https://api.github.com/repos/GabeRundlett/glsl-language-se
 const download_url =
   "https://github.com/GabeRundlett/glsl-language-server/releases/download";
 
-export enum INSTALLATION_NAME {
-  linux = "linux",
-  windows = "win32",
-}
+type availablePlatforms = "windows" | "linux" | null
 
 interface GLSLLSRelease {
   tag_name: string
@@ -29,17 +25,21 @@ export class GLSL {
     this.context = context;
   }
 
-  private getDefaultInstallationName(): INSTALLATION_NAME | null {
+  private platformName(): availablePlatforms {
     const platform = process.platform;
 
     switch (platform) {
       case "win32":
-        return INSTALLATION_NAME["windows"];
+        return "windows";
       case "linux":
-        return INSTALLATION_NAME["linux"];
+        return "linux";
       default:
-        return null;
+        return null
     }
+  }
+
+  private GLSLLSBinaryName() {
+    return `glslls${this.platformName() === "windows" ? "exe" : ""}`
   }
 
   async getVersions(): Promise<GLSLLSRelease[]> {
@@ -75,13 +75,13 @@ export class GLSL {
   }
 
   private async installLanguageServerExecutable(tag: string
-  ): Promise<string | null> {
-    const platform = this.getDefaultInstallationName();
+  ): Promise<string | undefined> {
+    const platform = this.platformName();
     if (!platform) {
       vscode.window.showInformationMessage(
         "There is no language server binary available for your system, you can manually install it from [here](https://github.com/GabeRundlett/glsl-language-server#install)"
       );
-      return null;
+      return;
     }
 
     return vscode.window.withProgress(
@@ -93,8 +93,8 @@ export class GLSL {
         progress.report({
           message: "Downloading glsl-language-server executable...",
         });
-        // Focusing on the first release for now
-        const download_exe_url = `${download_url}/${tag}/glslls${platform.endsWith("windows") ? ".exe" : ""}`
+
+        const download_exe_url = `${download_url}/${tag}/${this.GLSLLSBinaryName()}`
         const exe = (
           await axios.get(
             download_exe_url,
@@ -105,27 +105,25 @@ export class GLSL {
         ).data;
 
         progress.report({ message: "Installing..." });
-        // const installDir = vscode.Uri.joinPath(
-        //   this.context.globalStorageUri,
-        //   "glslls_install"
-        // );
-        // if (!fs.existsSync(installDir.fsPath)) mkdirp.sync(installDir.fsPath);
+        const installDir = vscode.Uri.joinPath(this.context.globalStorageUri, "glslls_install")
+        if (!fs.existsSync(installDir.fsPath))
+          fs.mkdirSync(installDir.fsPath, { recursive: true })
 
-        // const glsllsBinPath = vscode.Uri.joinPath(
-        //   installDir,
-        //   `glslls`
-        // ).fsPath;
-        // const glsllsBinTempPath = glsllsBinPath + ".tmp";
+        const glsllsBinPath = vscode.Uri.joinPath(installDir, this.GLSLLSBinaryName()).fsPath
 
-        // fs.writeFileSync(glsllsBinTempPath, exe, "binary");
-        // fs.chmodSync(glsllsBinTempPath, 0o755);
-        // if (fs.existsSync(glsllsBinPath)) fs.rmSync(glsllsBinPath);
-        // fs.renameSync(glsllsBinTempPath, glsllsBinPath);
+        fs.writeFileSync(glsllsBinPath, exe, "binary")
+        fs.chmodSync(glsllsBinPath, 0o755);
 
-        // vscode.window.showInformationMessage(
-        //   "GLSL Language Server has been successfully installed!"
-        // );
+
+        const config = vscode.workspace.getConfiguration("glslls");
+        config.update("path", glsllsBinPath, true);
+
+        vscode.window.showInformationMessage(
+          "GLSL Language Server has been successfully installed!"
+        );
+
         return glsllsBinPath;
+
       }
     );
   }
@@ -149,37 +147,36 @@ export class GLSL {
     }
   }
 
-  private async isGLSLLSInstalled(
-    context: vscode.ExtensionContext
+
+  public async isGLSLLSInstalled(
   ): Promise<boolean> {
-    const glsllsExecutableExists = await checkGLSLLSExecutableIsAvaiable(
-      context
-    );
+
+
     const configuration = vscode.workspace.getConfiguration("glslls");
-    const glsllsPath = configuration.get<string | null>("path", null);
+    const glsllsPath = configuration.get<string>("path");
+    // const glsllsExecutableExists = await checkGLSLLSExecutableIsAvaiable(glsllsPath ? glsllsPath : '');
 
-    if (glsllsPath != null && !glsllsExecutableExists) {
-      try {
-        fs.accessSync(glsllsPath, fs.constants.R_OK | fs.constants.X_OK);
-        return true;
-      } catch {
-        return false;
-      }
-    }
+    // vscode.window.showInformationMessage('ok')
 
-    return glsllsExecutableExists;
+    if (glsllsPath)
+      return true
+
+
+    return false;
   }
 
   async activateGLSL() {
-    const glsllsExists = await this.isGLSLLSInstalled(this.context);
+
+    const glsllsExists = await this.isGLSLLSInstalled();
+    vscode.window.showInformationMessage(`aaaa${glsllsExists}`)
 
     if (!glsllsExists) {
       await this.promptForInstallGLSLLS(this.context);
-      return null;
+      // return null;
     }
 
     vscode.commands.registerCommand("glslls.install", async () => {
-      // await this.installLanguageServerExecutable(this.context);
+      await this.selectVersionAndInstall();
     });
   }
 }

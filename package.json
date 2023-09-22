@@ -33,7 +33,7 @@
     ],
     "commands": [
       {
-        "command": "glsl.glslls.install",
+        "command": "glslls.install",
         "title": "Install Language Server",
         "category": "GLSL Language Server"
       }
@@ -42,22 +42,16 @@
       "type": "object",
       "title": "GLSL",
       "properties": {
-        "glslls.path": {
-          "scope": "resource",
-          "type": "string",
-          "description": "Path to glslls executable. Example: `/usr/local/bin/glslls`. ",
-          "format": "path"
-        },
-        "glsl.glslls.enabled": {
+        "glslls.enabled": {
           "scope": "resource",
           "type": "boolean",
           "description": "Whether to enable glslls",
           "default": true
         },
-        "glsl.glslls.path": {
+        "glslls.path": {
           "scope": "resource",
           "type": "string",
-          "description": "Path to `glslls` executable. Example: `/usr/local/bin/glslls`. If ${workspaceFolder} is used, it will resolve to the first workspace folder.",
+          "description": "Path to glslls executable. Example: `/usr/local/bin/glslls`.",
           "format": "path"
         }
       }
@@ -73,7 +67,6 @@
   },
   "dependencies": {
     "axios": "^1.4.0",
-    "mkdirp": "^3.0.1",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {

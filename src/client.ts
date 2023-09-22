@@ -26,7 +26,7 @@ export default class Client {
     return Promise.resolve(null);
   }
 
-  async start() {
+  async start(glsllsPath: string) {
     const clientOptions: LanguageClientOptions = {
       documentSelector: [{ scheme: "file", language: "glsl" }],
       diagnosticCollectionName: LSP_NAME,
@@ -34,7 +34,7 @@ export default class Client {
     };
 
     const serverOptions: ServerOptions = {
-      command: "glslls",
+      command: glsllsPath,
       // args: [],
       transport: TransportKind.stdio,
     };
@@ -48,7 +48,6 @@ export default class Client {
 
     try {
       await this.client.start();
-      console.log(this.client.initializeResult?.capabilities);
     } catch (error: any) {
       this.outputChannel.appendLine(
         `Error restarting the server: ${error.message}`
