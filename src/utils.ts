@@ -5,14 +5,18 @@ export async function checkGLSLLSExecutableIsAvaiable(binaryPath: string): Promi
     const glslLanguageServer = binaryPath
 
     return new Promise((resolve) => {
-        const process = spawn(glslLanguageServer, ['--version'])
+        try {
+            const process = spawn(glslLanguageServer, ['--version'])
 
-        process.on('close', (code) => {
-            resolve(code === 0); // Executable
-        });
+            process.on('close', (code) => {
+                resolve(code === 0); // Executable
+            });
 
-        process.on('error', () => {
-            resolve(false); // If an error occurs, the executable is not available
-        });
+            process.on('error', () => {
+                resolve(false); // If an error occurs, the executable is not available
+            });
+        } catch (error) {
+            return resolve(false)
+        }
     });
 }

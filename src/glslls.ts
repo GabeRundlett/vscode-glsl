@@ -150,15 +150,11 @@ export class GLSL {
 
   public async isGLSLLSInstalled(
   ): Promise<boolean> {
-
-
     const configuration = vscode.workspace.getConfiguration("glslls");
     const glsllsPath = configuration.get<string>("path");
-    // const glsllsExecutableExists = await checkGLSLLSExecutableIsAvaiable(glsllsPath ? glsllsPath : '');
+    const glsllsExecutableExists = await checkGLSLLSExecutableIsAvaiable(glsllsPath ? glsllsPath : '');
 
-    // vscode.window.showInformationMessage('ok')
-
-    if (glsllsPath)
+    if (glsllsPath && glsllsExecutableExists)
       return true
 
 
@@ -168,7 +164,6 @@ export class GLSL {
   async activateGLSL() {
 
     const glsllsExists = await this.isGLSLLSInstalled();
-    vscode.window.showInformationMessage(`aaaa${glsllsExists}`)
 
     if (!glsllsExists) {
       await this.promptForInstallGLSLLS(this.context);
