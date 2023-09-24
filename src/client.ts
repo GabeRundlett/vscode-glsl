@@ -6,7 +6,7 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 
-const LSP_NAME = "GLSL Language Server";
+const LSP_NAME = "GRSLS Language Server";
 
 export default class Client {
   private client: LanguageClient | undefined;
@@ -17,16 +17,7 @@ export default class Client {
     this.context = context;
   }
 
-  async provideDefinition(
-    document: vscode.TextDocument,
-    position: vscode.Position,
-    token: vscode.CancellationToken
-  ): Promise<vscode.Definition | vscode.DefinitionLink[] | null> {
-    vscode.window.showInformationMessage("testando");
-    return Promise.resolve(null);
-  }
-
-  async start(glsllsPath: string) {
+  async start(grslsPath: string) {
     const clientOptions: LanguageClientOptions = {
       documentSelector: [{ scheme: "file", language: "glsl" }],
       diagnosticCollectionName: LSP_NAME,
@@ -34,23 +25,27 @@ export default class Client {
     };
 
     const serverOptions: ServerOptions = {
-      command: glsllsPath,
-      // args: [],
+      command: grslsPath,
       transport: TransportKind.stdio,
     };
 
     this.client = new LanguageClient(
-      "GLSL Language Server",
+      "GR Language Server",
       LSP_NAME,
       serverOptions,
-      clientOptions
+      clientOptions,
     );
 
     try {
       await this.client.start();
+      vscode.commands.registerCommand("grsls.restart", async () => {
+        if (this.client) {
+          await this.client.restart();
+        }
+      });
     } catch (error: any) {
       this.outputChannel.appendLine(
-        `Error restarting the server: ${error.message}`
+        `Error restarting the server: ${error.message}`,
       );
       return;
     }

@@ -1,7 +1,7 @@
 {
   "name": "glsl-language-support",
   "displayName": "GLSL Language Support",
-  "description": "Language support for GLSL using glslls",
+  "description": "Language support for GLSL using gr-shader-language-server",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.81.0"
@@ -33,25 +33,24 @@
     ],
     "commands": [
       {
-        "command": "glslls.install",
+        "command": "grsls.install",
         "title": "Install Language Server",
-        "category": "GLSL Language Server"
+        "category": "GRLSL"
+      },
+      {
+        "command": "grsls.restart",
+        "title": "Restart Language Server",
+        "category": "GRLSL"
       }
     ],
     "configuration": {
       "type": "object",
       "title": "GLSL",
       "properties": {
-        "glslls.enabled": {
-          "scope": "resource",
-          "type": "boolean",
-          "description": "Whether to enable glslls",
-          "default": true
-        },
-        "glslls.path": {
+        "grsls.path": {
           "scope": "resource",
           "type": "string",
-          "description": "Path to glslls executable. Example: `/usr/local/bin/glslls`.",
+          "description": "Path to grsls executable. Example: `/usr/local/bin/grsls`.",
           "format": "path"
         }
       }
@@ -80,6 +79,7 @@
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
+    "prettier": "3.0.3",
     "typescript": "^5.1.3"
   }
 }

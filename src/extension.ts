@@ -1,23 +1,25 @@
 import * as vscode from "vscode";
-import { GLSL } from "./glslls";
 import Client from "./client";
+import { GRSLS } from "./grsls";
 
 let client: Client | undefined;
 
 export async function activate(context: vscode.ExtensionContext) {
-  const glsl = new GLSL(context);
-  glsl
-    .activateGLSL()
+  const grsls = new GRSLS(context);
+  await grsls.activateGRSLSSetup().then(() => {});
 
-    .then(async () => {
-      const configuration = vscode.workspace.getConfiguration("glslls");
-      const glsllsPath = configuration.get<string>("path", "");
+  const configuration = vscode.workspace.getConfiguration("grsls");
 
-      if (glsllsPath) {
-        client = new Client(context);
-        client.start(glsllsPath);
-      }
-    });
+  const GRSLSPath = configuration.get<string>("path");
+
+  if (GRSLSPath) {
+    client = new Client(context);
+    return await client.start(GRSLSPath);
+  }
+
+  await vscode.window.showErrorMessage(
+    "A path to GRSLS has not been configured. 😞",
+  );
 }
 
 export async function deactivate(): Promise<void> {

@@ -1,22 +1,32 @@
-import { exec, spawn } from "child_process";
-import { ExtensionContext, window } from "vscode";
+import * as path from "path";
+import * as fs from "fs";
 
-export async function checkGLSLLSExecutableIsAvaiable(binaryPath: string): Promise<boolean> {
-    const glslLanguageServer = binaryPath
+export function findServerLanguagePath(
+  serverExecutable: string,
+): Promise<string | null> {
+  return new Promise((resolve) => {
+    const pathsToCheck = process.env.PATH?.split(path.delimiter) || [];
+    let foundPath: string | null = null;
 
-    return new Promise((resolve) => {
-        try {
-            const process = spawn(glslLanguageServer, ['--version'])
+    const checkNextPath = (index: number) => {
+      if (index >= pathsToCheck.length) {
+        resolve(foundPath);
+        return;
+      }
 
-            process.on('close', (code) => {
-                resolve(code === 0); // Executable
-            });
+      const dir = pathsToCheck[index];
+      const fullPath = path.join(dir, serverExecutable);
 
-            process.on('error', () => {
-                resolve(false); // If an error occurs, the executable is not available
-            });
-        } catch (error) {
-            return resolve(false)
+      fs.access(fullPath, fs.constants.X_OK, (err) => {
+        if (!err) {
+          foundPath = fullPath;
+          resolve(foundPath);
+        } else {
+          checkNextPath(index + 1);
         }
-    });
+      });
+    };
+
+    checkNextPath(0);
+  });
 }
