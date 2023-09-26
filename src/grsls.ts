@@ -33,7 +33,8 @@ export class GRSLS {
 
     switch (platform) {
       case "win32":
-        return "windows";
+        // return "windows";
+        null;
       case "linux":
         return "linux";
       default:
@@ -139,13 +140,6 @@ export class GRSLS {
       canPickMany: false,
       placeHolder: "Select a GRSLS version",
     });
-
-    vscode.window.showInformationMessage(
-      `teste:::${selection?.browser_download_url}`,
-    );
-    vscode.window.showInformationMessage(
-      `oia:::${this.ExecutableExtension} 2: ${selection?.browser_download_url}`,
-    );
 
     if (selection) {
       const selectedItem = items.find((item) => item.label === selection.label);
