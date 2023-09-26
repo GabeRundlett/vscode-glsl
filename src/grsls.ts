@@ -34,7 +34,7 @@ export class GRSLS {
     switch (platform) {
       case "win32":
         // return "windows";
-        null;
+        return null;
       case "linux":
         return "linux";
       default:
