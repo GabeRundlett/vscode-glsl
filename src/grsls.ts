@@ -10,7 +10,7 @@ type availablePlatforms = "windows" | "linux" | null;
 
 interface GRSLRelease {
   tag_name: string;
-  pre_release: boolean;
+  prerelease: boolean;
   assets: [{ browser_download_url: string }];
 }
 
@@ -126,7 +126,7 @@ export class GRSLS {
     const availableVersions = await this.getVersions();
     const items: VersionItem[] = availableVersions.map((option) => ({
       label: option.tag_name,
-      description: option.pre_release ? "Pre-release" : "",
+      description: option.prerelease ? "Pre-release" : "",
       browser_download_url: option.assets[0].browser_download_url,
       detail: undefined,
     }));
