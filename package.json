@@ -7,7 +7,8 @@
     "type": "git",
     "url": "https://github.com/GabeRundlett/vscode-glsl"
   },
-  "version": "0.0.1",
+  "version": "0.0.4",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.81.0"
   },
@@ -40,12 +41,12 @@
       {
         "command": "grsls.install",
         "title": "Install Language Server",
-        "category": "GRLSL"
+        "category": "GRSLS"
       },
       {
         "command": "grsls.restart",
         "title": "Restart Language Server",
-        "category": "GRLSL"
+        "category": "GRSLS"
       }
     ],
     "configuration": {
@@ -63,7 +64,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": "esbuild --bundle --sourcemap=external --minify --external:vscode src/extension.ts --outdir=out --platform=node --format=cjs",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
@@ -72,6 +73,7 @@
   "dependencies": {
     "axios": "^1.4.0",
     "net": "^1.0.2",
+    "esbuild": "^0.12.1",
     "vscode-languageclient": "^8.1.0"
   },
   "devDependencies": {
