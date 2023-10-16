@@ -40,7 +40,7 @@ export default class Client {
     }> {
       return new Promise<{ process: cp.ChildProcess; streamInfo: StreamInfo }>(
         (resolve, reject) => {
-          const serverProcess = cp.spawn(grslsPath, []);
+          const serverProcess = cp.spawn(grslsPath);
 
           const socket = net.connect(connectionInfo);
 
@@ -60,7 +60,7 @@ export default class Client {
 
     const serverOptions: ServerOptions = async () => {
       try {
-        const { process, streamInfo } = await startServerWithStreamInfo();
+        const { streamInfo } = await startServerWithStreamInfo();
         return {
           reader: streamInfo.reader,
           writer: streamInfo.writer,
@@ -80,17 +80,13 @@ export default class Client {
 
     try {
       await this.client.start();
-      // console.log(this.client.initializeResult?.capabilities);
-      // createServerSocketTransport;
       vscode.commands.registerCommand("grsls.restart", async () => {
         if (this.client) {
           await this.client.restart();
         }
       });
     } catch (error: any) {
-      this.outputChannel.appendLine(
-        `Error restarting the server: ${error.message}`,
-      );
+      this.outputChannel.appendLine(`Error: ${error.message}`);
       return;
     }
   }
