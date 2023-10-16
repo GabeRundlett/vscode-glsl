@@ -25,7 +25,7 @@ export default class Client {
   async start(grslsPath: string) {
     const connectionInfo = {
       port: 7125,
-      host: "127.0.0.0",
+      host: "127.0.0.1",
     };
 
     const clientOptions: LanguageClientOptions = {
@@ -80,8 +80,8 @@ export default class Client {
 
     try {
       await this.client.start();
-      console.log(this.client.initializeResult?.capabilities);
-      createServerSocketTransport;
+      // console.log(this.client.initializeResult?.capabilities);
+      // createServerSocketTransport;
       vscode.commands.registerCommand("grsls.restart", async () => {
         if (this.client) {
           await this.client.restart();
