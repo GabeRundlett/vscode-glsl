@@ -3,11 +3,12 @@
   "publisher": "GabeRundlett",
   "displayName": "Gabe Rundlett's Shader Language Support",
   "description": "Language support for GLSL using gr-shader-language-server",
+  "icon": "images/logo.jpg",
   "repository": {
     "type": "git",
     "url": "https://github.com/GabeRundlett/vscode-glsl"
   },
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "engines": {
     "vscode": "^1.81.0"
